@@ -47,14 +47,14 @@ class ImpotAssmat:
                 for i, item in enumerate(text_list):
                     text_list[i] = re.compile(r"\s+").sub(" ", item).strip()                    
                     
-                    if "nombre de jours d'activité" in text_list[i] and text_list[i][0] == "n":
-                        jour = float(text_list[i].split()[4].replace(",", "."))
-                    elif "référence employeur" in text_list[i]:
+                    if JOUR_STR in text_list[i] and text_list[i][0] == "n":
+                        jour = float(text_list[i].split()[len(JOUR_STR.split())].replace(",", "."))
+                    elif EMPLOYEUR_STR in text_list[i]:
                         employeur = text_list[i+1].upper() 
-                    elif "csg + rds non deductible de l'impot sur le revenu" in text_list[i]:
-                        csg = float(text_list[i].split()[12].replace(",", "."))
-                    elif "salaire net déclaré (y compris indemnités)" in text_list[i]:
-                        salaire_net = float(text_list[i].split()[6].replace(",", "."))                    
+                    elif CSG_STR in text_list[i]:
+                        csg = float(text_list[i].split()[len(CSG_STR.split()) + 2].replace(",", "."))
+                    elif SALAIRE_NET_STR in text_list[i]:
+                        salaire_net = float(text_list[i].split()[len(SALAIRE_NET_STR.split())].replace(",", "."))                    
 
                 if employeur not in self.result_dict:
                     self.result_dict[employeur] = dict()
@@ -64,7 +64,7 @@ class ImpotAssmat:
                 else:
                     self.result_dict[employeur]["jour_tot"] += jour
                     self.result_dict[employeur]["csg_tot"] += csg
-                    self.result_dict[employeur]["salaire_net_tot"] += salaire_net                
+                    self.result_dict[employeur]["salaire_net_tot"] += salaire_net   
 
             except:
                 print("Problème : {}".format(pdf))
